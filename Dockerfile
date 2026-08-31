@@ -9,7 +9,7 @@ COPY src ./src
 RUN npm run build
 
 FROM dependencies AS checks
-COPY tsconfig.json tsconfig.build.json vitest.config.ts eslint.config.js ./
+COPY tsconfig.json tsconfig.build.json vitest.config.ts eslint.config.js .prettierrc.json ./
 COPY src ./src
 COPY tests ./tests
 CMD ["npm", "test"]
