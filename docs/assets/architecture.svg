@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+  <title id="title">Архитектура VK Content Bot</title>
+  <desc id="desc">Два этапа работы: предварительная подготовка медиа и быстрая выдача готового контента</desc>
+
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#111827"/>
+      <stop offset="1" stop-color="#0b1220"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-25%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#020617" flood-opacity=".34"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 10 5 0 10Z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="600" rx="30" fill="url(#background)"/>
+
+  <g font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif">
+    <text x="60" y="62" fill="#f8fafc" font-size="29" font-weight="700">Два этапа — один быстрый ответ</text>
+    <text x="60" y="94" fill="#94a3b8" font-size="16">Медиа загружается в VK заранее, а при запросе бот использует готовое вложение</text>
+
+    <rect x="42" y="126" width="1116" height="198" rx="24" fill="#0f172a" stroke="#1e293b"/>
+    <text x="68" y="160" fill="#38bdf8" font-size="14" font-weight="700" letter-spacing="1.6">ВЫДАЧА КОНТЕНТА</text>
+
+    <g filter="url(#shadow)" fill="#182235" stroke="#334155">
+      <rect x="68" y="181" width="238" height="108" rx="18"/>
+      <rect x="344" y="181" width="238" height="108" rx="18"/>
+      <rect x="620" y="181" width="238" height="108" rx="18"/>
+      <rect x="896" y="181" width="238" height="108" rx="18"/>
+    </g>
+
+    <g text-anchor="middle">
+      <text x="187" y="223" fill="#f8fafc" font-size="19" font-weight="700">Пользователь VK</text>
+      <text x="187" y="253" fill="#94a3b8" font-size="14">отправляет ключевую фразу</text>
+
+      <text x="463" y="223" fill="#f8fafc" font-size="19" font-weight="700">Node.js-бот</text>
+      <text x="463" y="253" fill="#94a3b8" font-size="14">находит подходящее правило</text>
+
+      <text x="739" y="223" fill="#f8fafc" font-size="19" font-weight="700">Directus</text>
+      <text x="739" y="248" fill="#94a3b8" font-size="14">
+        <tspan x="739" dy="0">отдаёт текст</tspan>
+        <tspan x="739" dy="20">и сохранённые VK ID</tspan>
+      </text>
+
+      <text x="1015" y="223" fill="#f8fafc" font-size="19" font-weight="700">VK API</text>
+      <text x="1015" y="248" fill="#94a3b8" font-size="14">
+        <tspan x="1015" dy="0">отправляет готовый</tspan>
+        <tspan x="1015" dy="20">ответ в диалог</tspan>
+      </text>
+    </g>
+
+    <g fill="none" stroke="#38bdf8" stroke-width="3" marker-end="url(#arrow)">
+      <path d="M310 235H334"/>
+      <path d="M586 235H610"/>
+      <path d="M862 235H886"/>
+    </g>
+
+    <rect x="42" y="350" width="1116" height="198" rx="24" fill="#0f172a" stroke="#1e293b"/>
+    <text x="68" y="384" fill="#38bdf8" font-size="14" font-weight="700" letter-spacing="1.6">ПОДГОТОВКА МЕДИА</text>
+
+    <g filter="url(#shadow)" fill="#182235" stroke="#334155">
+      <rect x="68" y="405" width="238" height="108" rx="18"/>
+      <rect x="344" y="405" width="238" height="108" rx="18"/>
+      <rect x="620" y="405" width="238" height="108" rx="18"/>
+      <rect x="896" y="405" width="238" height="108" rx="18"/>
+    </g>
+
+    <g text-anchor="middle">
+      <text x="187" y="447" fill="#f8fafc" font-size="19" font-weight="700">Яндекс Диск</text>
+      <text x="187" y="477" fill="#94a3b8" font-size="14">хранит закрытый исходник</text>
+
+      <text x="463" y="447" fill="#f8fafc" font-size="19" font-weight="700">Фоновый worker</text>
+      <text x="463" y="472" fill="#94a3b8" font-size="14">
+        <tspan x="463" dy="0">получает временную ссылку</tspan>
+        <tspan x="463" dy="20">и передаёт файл потоком</tspan>
+      </text>
+
+      <text x="739" y="447" fill="#f8fafc" font-size="19" font-weight="700">VK API</text>
+      <text x="739" y="477" fill="#94a3b8" font-size="14">принимает файл один раз</text>
+
+      <text x="1015" y="447" fill="#f8fafc" font-size="19" font-weight="700">Directus</text>
+      <text x="1015" y="472" fill="#94a3b8" font-size="14">
+        <tspan x="1015" dy="0">сохраняет VK ID</tspan>
+        <tspan x="1015" dy="20">для быстрой выдачи</tspan>
+      </text>
+    </g>
+
+    <g fill="none" stroke="#38bdf8" stroke-width="3" marker-end="url(#arrow)">
+      <path d="M310 459H334"/>
+      <path d="M586 459H610"/>
+      <path d="M862 459H886"/>
+    </g>
+
+    <text x="60" y="578" fill="#64748b" font-size="12">Этап подготовки выполняется один раз; обращаться к Яндекс Диску при каждом сообщении не нужно.</text>
+  </g>
+</svg>

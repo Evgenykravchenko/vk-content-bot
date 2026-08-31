@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="500" viewBox="0 0 1100 500" role="img" aria-labelledby="title desc">
+  <title id="title">Модель контента VK Content Bot</title>
+  <desc id="desc">Связи ключевых слов, ответов, блоков, медиа и inline-кнопок</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#eef2ff"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 10 5 0 10Z" fill="#2563eb"/>
+    </marker>
+  </defs>
+
+  <rect width="1100" height="500" rx="24" fill="url(#bg)"/>
+  <g font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif">
+    <text x="48" y="56" font-size="26" font-weight="700" fill="#0f172a">Контент и действия собираются независимо</text>
+    <text x="48" y="86" font-size="15" fill="#64748b">Один ответ может содержать текст, медиа и набор inline-кнопок</text>
+
+    <g fill="#fff" stroke="#cbd5e1" stroke-width="2">
+      <rect x="48" y="132" width="210" height="168" rx="16"/>
+      <rect x="310" y="132" width="210" height="168" rx="16"/>
+      <rect x="572" y="132" width="210" height="168" rx="16"/>
+      <rect x="834" y="132" width="218" height="168" rx="16"/>
+      <rect x="310" y="340" width="472" height="96" rx="16"/>
+    </g>
+
+    <g fill="#0f172a" font-size="18" font-weight="700">
+      <text x="72" y="170">Ключевые слова</text>
+      <text x="334" y="170">Ответ</text>
+      <text x="596" y="170">Блоки</text>
+      <text x="858" y="170">Медиа</text>
+      <text x="334" y="376">Кнопки</text>
+    </g>
+
+    <g fill="#64748b" font-size="14">
+      <text x="72" y="206">фраза</text>
+      <text x="72" y="232">тип совпадения</text>
+      <text x="72" y="258">приоритет</text>
+
+      <text x="334" y="206">название</text>
+      <text x="334" y="232">черновик / опубликован</text>
+      <text x="334" y="258">резервный текст</text>
+
+      <text x="596" y="206">текст · фото · видео</text>
+      <text x="596" y="232">аудио · документ</text>
+      <text x="596" y="258">порядок · отдельная отправка</text>
+
+      <text x="858" y="206">путь на Диске</text>
+      <text x="858" y="232">статус подготовки</text>
+      <text x="858" y="258">готовый VK ID</text>
+
+      <text x="460" y="376">команда → ключевая фраза</text>
+      <text x="460" y="402">ссылка → https:// URL</text>
+      <text x="650" y="376">ряд</text>
+      <text x="650" y="402">порядок · цвет</text>
+    </g>
+
+    <g fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)">
+      <path d="M258 216H300"/>
+      <path d="M520 216H562"/>
+      <path d="M782 216H824"/>
+      <path d="M415 300V330"/>
+    </g>
+
+    <g fill="#2563eb" font-size="12" font-weight="700">
+      <text x="270" y="202">N:1</text>
+      <text x="532" y="202">1:N</text>
+      <text x="794" y="202">N:1</text>
+      <text x="425" y="323">1:N</text>
+    </g>
+
+    <rect x="48" y="458" width="1004" height="26" rx="10" fill="#dbeafe"/>
+    <text x="64" y="476" fill="#1e40af" font-size="13">Новый текст, файл или кнопка добавляются в Directus без изменения кода бота.</text>
+  </g>
+</svg>
