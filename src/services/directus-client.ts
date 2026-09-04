@@ -1,4 +1,5 @@
 import type {
+  BotSettings,
   ContentResponse,
   KeywordRule,
   MediaAsset,
@@ -66,6 +67,19 @@ export class DirectusClient {
       `/items/keywords?${query.toString()}`,
     );
     return result.data;
+  }
+
+  async getBotSettings(): Promise<BotSettings | null> {
+    try {
+      const query = new URLSearchParams({ fields: 'unknown_message,fallback_response' });
+      const result = await this.request<DirectusEnvelope<BotSettings>>(
+        `/items/bot_settings?${query.toString()}`,
+      );
+      return result.data;
+    } catch (error) {
+      if (error instanceof DirectusError && error.status === 404) return null;
+      throw error;
+    }
   }
 
   async getPreparedResponse(responseId: number): Promise<PreparedResponse | null> {

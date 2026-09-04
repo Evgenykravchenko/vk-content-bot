@@ -1,5 +1,6 @@
 const baseUrl = process.env.DIRECTUS_URL ?? 'http://localhost:8055';
 const token = process.env.DIRECTUS_TOKEN;
+const seedDemoContent = process.env.DIRECTUS_SEED_DEMO === 'true';
 
 if (!token) {
   throw new Error('DIRECTUS_TOKEN is required');
@@ -179,6 +180,12 @@ async function createItem(collection, data) {
 }
 
 async function createSchema() {
+  await ensureCollection('bot_settings', {
+    icon: 'settings',
+    note: 'Общие настройки поведения бота',
+    display_template: 'Настройки бота',
+    singleton: true,
+  });
   await ensureCollection('responses', {
     icon: 'forum',
     note: 'Готовые сценарии ответа пользователю',
@@ -220,6 +227,25 @@ async function createSchema() {
       'draft',
     ),
     textField('fallback_text', 'Текст на случай, если все блоки ответа пусты'),
+  ];
+
+  const settingsFields = [
+    textField(
+      'unknown_message',
+      'Текст, если ключевая фраза не найдена и fallback-ответ не выбран',
+    ),
+    {
+      field: 'fallback_response',
+      type: 'integer',
+      meta: {
+        interface: 'select-dropdown-m2o',
+        display: 'related-values',
+        display_options: { template: '{{name}}' },
+        note: 'Необязательный опубликованный ответ для неизвестных сообщений',
+        width: 'full',
+      },
+      schema: { is_nullable: true },
+    },
   ];
 
   const mediaFields = [
@@ -359,11 +385,9 @@ async function createSchema() {
       ],
       'text',
     ),
-    stringField(
-      'target',
-      'Для команды — ключевая фраза; для ссылки — полный https://-URL',
-      { required: true },
-    ),
+    stringField('target', 'Для команды — ключевая фраза; для ссылки — полный https://-URL', {
+      required: true,
+    }),
     selectField(
       'color',
       'Цвет кнопки-команды; для ссылки VK выберет оформление сам',
@@ -380,12 +404,25 @@ async function createSchema() {
     booleanField('enabled', 'Кнопка включена', true),
   ];
 
+  for (const field of settingsFields) await ensureField('bot_settings', field);
   for (const field of responseFields) await ensureField('responses', field);
   for (const field of mediaFields) await ensureField('media_assets', field);
   for (const field of keywordFields) await ensureField('keywords', field);
   for (const field of blockFields) await ensureField('response_blocks', field);
   for (const field of buttonFields) await ensureField('response_buttons', field);
 
+  await ensureRelation({
+    collection: 'bot_settings',
+    field: 'fallback_response',
+    related_collection: 'responses',
+    schema: { on_delete: 'SET NULL' },
+    meta: {
+      many_collection: 'bot_settings',
+      many_field: 'fallback_response',
+      one_collection: 'responses',
+      one_field: null,
+    },
+  });
   await ensureRelation({
     collection: 'keywords',
     field: 'response',
@@ -475,5 +512,8 @@ async function seedDemo() {
 
 await waitForDirectus();
 await createSchema();
-await seedDemo();
+if (seedDemoContent) {
+  await seedDemo();
+  console.log('Demo content is ready.');
+}
 console.log('Directus schema is ready.');

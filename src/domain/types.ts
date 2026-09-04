@@ -32,6 +32,16 @@ export interface ContentResponse {
   fallback_text: string | null;
 }
 
+export interface BotSettings {
+  unknown_message: string | null;
+  fallback_response: number | null;
+}
+
+export interface FallbackContent {
+  response: PreparedResponse | null;
+  message: string | null;
+}
+
 export interface MediaAsset {
   id: number;
   name: string;

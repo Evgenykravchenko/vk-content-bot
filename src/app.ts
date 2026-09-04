@@ -1,6 +1,8 @@
 import { VK, getRandomId } from 'vk-io';
+import type { MessageContext } from 'vk-io';
 import type { AppConfig } from './config/env.js';
 import type { Logger } from './config/logger.js';
+import type { PreparedResponse } from './domain/types.js';
 import { renderResponse } from './domain/renderer.js';
 import { keywordFromButtonPayload } from './domain/keyboard.js';
 import { ContentService } from './services/content-service.js';
@@ -9,8 +11,8 @@ import { MediaPreparer } from './services/media-preparer.js';
 import { MediaWorker } from './services/media-worker.js';
 import { YandexDiskClient } from './services/yandex-disk-client.js';
 
-const UNKNOWN_COMMAND_MESSAGE =
-  'Не нашёл подходящего материала. Проверьте ключевое слово или напишите «помощь».';
+const DEFAULT_UNKNOWN_COMMAND_MESSAGE =
+  'Не нашёл подходящего материала. Попробуйте другое ключевое слово.';
 
 export class Application {
   private readonly vk: VK;
@@ -74,20 +76,25 @@ export class Application {
 
         const content = await this.content.findResponse(text);
         if (!content) {
-          await context.send({ message: UNKNOWN_COMMAND_MESSAGE, random_id: getRandomId() });
+          const fallback = await this.content.getFallbackContent();
+          if (fallback.response) {
+            const sent = await this.sendResponse(context, fallback.response);
+            if (!sent) {
+              await context.send({
+                message: fallback.message ?? DEFAULT_UNKNOWN_COMMAND_MESSAGE,
+                random_id: getRandomId(),
+              });
+            }
+          } else {
+            await context.send({
+              message: fallback.message ?? DEFAULT_UNKNOWN_COMMAND_MESSAGE,
+              random_id: getRandomId(),
+            });
+          }
           return;
         }
 
-        const messages = renderResponse(content);
-        for (const outgoing of messages) {
-          const options = {
-            random_id: getRandomId(),
-            ...(outgoing.message ? { message: outgoing.message } : {}),
-            ...(outgoing.attachment ? { attachment: outgoing.attachment } : {}),
-            ...(outgoing.keyboard ? { keyboard: outgoing.keyboard } : {}),
-          };
-          await context.send(options);
-        }
+        await this.sendResponse(context, content);
 
         this.logger.info(
           { senderId: context.senderId, responseId: content.response.id },
@@ -105,5 +112,19 @@ export class Application {
           });
       }
     });
+  }
+
+  private async sendResponse(context: MessageContext, content: PreparedResponse): Promise<boolean> {
+    const messages = renderResponse(content);
+    for (const outgoing of messages) {
+      const options = {
+        random_id: getRandomId(),
+        ...(outgoing.message ? { message: outgoing.message } : {}),
+        ...(outgoing.attachment ? { attachment: outgoing.attachment } : {}),
+        ...(outgoing.keyboard ? { keyboard: outgoing.keyboard } : {}),
+      };
+      await context.send(options);
+    }
+    return messages.length > 0;
   }
 }

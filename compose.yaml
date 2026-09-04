@@ -83,6 +83,7 @@ services:
     environment:
       DIRECTUS_URL: http://directus:8055
       DIRECTUS_TOKEN: ${DIRECTUS_TOKEN}
+      DIRECTUS_SEED_DEMO: ${DIRECTUS_SEED_DEMO:-false}
     volumes:
       - ./scripts/bootstrap-directus.mjs:/app/bootstrap-directus.mjs:ro
     command: ['node', '/app/bootstrap-directus.mjs']

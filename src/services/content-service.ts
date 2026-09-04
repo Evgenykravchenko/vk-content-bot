@@ -1,5 +1,5 @@
 import { findBestRule } from '../domain/matcher.js';
-import type { KeywordRule, PreparedResponse } from '../domain/types.js';
+import type { FallbackContent, KeywordRule, PreparedResponse } from '../domain/types.js';
 import type { Logger } from '../config/logger.js';
 import type { DirectusClient } from './directus-client.js';
 
@@ -25,6 +25,22 @@ export class ContentService {
 
     this.logger.debug({ ruleId: rule.id, responseId: rule.response }, 'Keyword rule matched');
     return this.directus.getPreparedResponse(rule.response);
+  }
+
+  async getFallbackContent(): Promise<FallbackContent> {
+    const settings = await this.directus.getBotSettings();
+    const fallbackResponseId = settings?.fallback_response;
+    const fallbackMessage = settings?.unknown_message?.trim() || null;
+
+    if (fallbackResponseId) {
+      const response = await this.directus.getPreparedResponse(fallbackResponseId);
+      if (response) return { response, message: fallbackMessage };
+    }
+
+    return {
+      response: null,
+      message: fallbackMessage,
+    };
   }
 
   invalidate(): void {
