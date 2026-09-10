@@ -104,7 +104,7 @@ services:
       TS_AUTH_ONCE: 'true'
       TS_ENABLE_HEALTH_CHECK: 'true'
       TS_HOSTNAME: bot-content-cms
-      TS_LOCAL_ADDR_PORT: ':9002'
+      TS_LOCAL_ADDR_PORT: '0.0.0.0:9002'
       TS_SERVE_CONFIG: /config/serve.json
       TS_STATE_DIR: /var/lib/tailscale
       TS_USERSPACE: 'true'
