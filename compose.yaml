@@ -1,109 +1,20 @@
 name: vk-content-bot
 
 services:
-  database:
-    image: postgres:17.6-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
-      interval: 5s
-      timeout: 5s
-      retries: 12
-    networks: [backend]
-
-  cache:
-    image: redis:8.2-alpine
-    restart: unless-stopped
-    command: ['redis-server', '--save', '60', '1', '--loglevel', 'warning']
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
-      interval: 5s
-      timeout: 3s
-      retries: 12
-    networks: [backend]
-
-  directus:
-    image: directus/directus:11.17.4
-    restart: unless-stopped
-    depends_on:
-      database:
-        condition: service_healthy
-      cache:
-        condition: service_healthy
-    ports:
-      - '8055:8055'
-    environment:
-      SECRET: ${DIRECTUS_SECRET}
-      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
-      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
-      ADMIN_TOKEN: ${DIRECTUS_TOKEN}
-      DB_CLIENT: pg
-      DB_HOST: database
-      DB_PORT: 5432
-      DB_DATABASE: ${POSTGRES_DB}
-      DB_USER: ${POSTGRES_USER}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
-      CACHE_ENABLED: 'true'
-      CACHE_AUTO_PURGE: 'true'
-      CACHE_STORE: redis
-      REDIS: redis://cache:6379
-      PUBLIC_URL: ${DIRECTUS_PUBLIC_URL}
-      TELEMETRY: 'false'
-      WEBSOCKETS_ENABLED: 'true'
-    volumes:
-      - ./directus/uploads:/directus/uploads
-      - ./directus/extensions:/directus/extensions
-    healthcheck:
-      test:
-        [
-          'CMD',
-          'node',
-          '-e',
-          "fetch('http://127.0.0.1:8055/server/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
-        ]
-      interval: 5s
-      timeout: 5s
-      retries: 24
-      start_period: 20s
-    networks: [backend]
-
-  cms-bootstrap:
-    image: node:22.18.0-alpine
-    depends_on:
-      directus:
-        condition: service_healthy
-    environment:
-      DIRECTUS_URL: http://directus:8055
-      DIRECTUS_TOKEN: ${DIRECTUS_TOKEN}
-      DIRECTUS_SEED_DEMO: ${DIRECTUS_SEED_DEMO:-false}
-    volumes:
-      - ./scripts/bootstrap-directus.mjs:/app/bootstrap-directus.mjs:ro
-    command: ['node', '/app/bootstrap-directus.mjs']
-    restart: 'no'
-    networks: [backend]
-
   bot:
     build:
       context: .
       target: runtime
     restart: unless-stopped
-    depends_on:
-      cms-bootstrap:
-        condition: service_completed_successfully
+    extra_hosts:
+      - host.docker.internal:host-gateway
     environment:
       NODE_ENV: production
       VK_TOKEN: ${VK_TOKEN}
       VK_GROUP_ID: ${VK_GROUP_ID}
       VK_MEDIA_UPLOAD_PEER_ID: ${VK_MEDIA_UPLOAD_PEER_ID}
-      DIRECTUS_URL: http://directus:8055
+      CONTENT_BOT_KEY: ${CONTENT_BOT_KEY:-vk-content-bot}
+      DIRECTUS_URL: ${DIRECTUS_URL:-http://host.docker.internal:8055}
       DIRECTUS_TOKEN: ${DIRECTUS_TOKEN}
       YANDEX_DISK_TOKEN: ${YANDEX_DISK_TOKEN:-}
       YANDEX_DISK_ROOT: ${YANDEX_DISK_ROOT:-/VK Bot}
@@ -111,19 +22,15 @@ services:
       RULE_CACHE_TTL_SECONDS: ${RULE_CACHE_TTL_SECONDS:-30}
       MEDIA_POLL_INTERVAL_SECONDS: ${MEDIA_POLL_INTERVAL_SECONDS:-20}
       MEDIA_BATCH_SIZE: ${MEDIA_BATCH_SIZE:-3}
-    networks: [backend]
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
 
   checks:
     profiles: [tools]
     build:
       context: .
       target: checks
-    command: ['npm', 'test']
-
-volumes:
-  postgres_data:
-  redis_data:
-
-networks:
-  backend:
-    driver: bridge
+    command: [npm, test]

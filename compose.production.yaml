@@ -1,126 +1,13 @@
-name: bot-content-platform
-
 services:
-  database:
-    image: postgres:17.6-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
-      interval: 5s
-      timeout: 5s
-      retries: 12
-    networks: [backend]
-
-  cache:
-    image: redis:8.2-alpine
-    restart: unless-stopped
-    command: ['redis-server', '--save', '60', '1', '--loglevel', 'warning']
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
-      interval: 5s
-      timeout: 3s
-      retries: 12
-    networks: [backend]
-
-  directus:
-    image: directus/directus:11.17.4
-    restart: unless-stopped
-    depends_on:
-      database:
-        condition: service_healthy
-      cache:
-        condition: service_healthy
-    environment:
-      SECRET: ${DIRECTUS_SECRET}
-      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
-      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
-      ADMIN_TOKEN: ${DIRECTUS_TOKEN}
-      DB_CLIENT: pg
-      DB_HOST: database
-      DB_PORT: 5432
-      DB_DATABASE: ${POSTGRES_DB}
-      DB_USER: ${POSTGRES_USER}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
-      CACHE_ENABLED: 'true'
-      CACHE_AUTO_PURGE: 'true'
-      CACHE_STORE: redis
-      REDIS: redis://cache:6379/1
-      RATE_LIMITER_ENABLED: 'true'
-      RATE_LIMITER_STORE: redis
-      RATE_LIMITER_POINTS: '50'
-      RATE_LIMITER_DURATION: '1'
-      LOGIN_STALL_TIME: '1000'
-      PUBLIC_URL: https://bot-content-cms.tailcc0b45.ts.net
-      TELEMETRY: 'false'
-      WEBSOCKETS_ENABLED: 'true'
-    volumes:
-      - directus_uploads:/directus/uploads
-      - directus_extensions:/directus/extensions
-    healthcheck:
-      test:
-        [
-          'CMD',
-          'node',
-          '-e',
-          "fetch('http://127.0.0.1:8055/server/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))",
-        ]
-      interval: 5s
-      timeout: 5s
-      retries: 24
-      start_period: 20s
-    networks: [backend]
-
-  cms-bootstrap:
-    image: node:22.18.0-alpine
-    depends_on:
-      directus:
-        condition: service_healthy
+  bot:
+    image: ${BOT_IMAGE:-ghcr.io/evgenykravchenko/vk-content-bot}:${BOT_VERSION:?BOT_VERSION must be a SemVer release such as 0.2.0}
     environment:
       DIRECTUS_URL: http://directus:8055
-      DIRECTUS_TOKEN: ${DIRECTUS_TOKEN}
-      DIRECTUS_SEED_DEMO: 'false'
-    volumes:
-      - ./scripts/bootstrap-directus.mjs:/app/bootstrap-directus.mjs:ro
-    command: ['node', '/app/bootstrap-directus.mjs']
-    restart: 'no'
-    networks: [backend]
-
-  tailscale:
-    image: tailscale/tailscale:stable@sha256:8c42c4574ab066384fcb72f69e086a2ff1dd3652eb6f56856cee34bcf0d2f680
-    hostname: bot-content-cms
-    restart: unless-stopped
-    depends_on:
-      cms-bootstrap:
-        condition: service_completed_successfully
-    environment:
-      TS_AUTH_ONCE: 'true'
-      TS_BOOT_TIMEOUT: '10m'
-      TS_ENABLE_HEALTH_CHECK: 'true'
-      TS_HOSTNAME: bot-content-cms
-      TS_LOCAL_ADDR_PORT: '0.0.0.0:9002'
-      TS_SERVE_CONFIG: /config/serve.json
-      TS_STATE_DIR: /var/lib/tailscale
-      TS_USERSPACE: 'true'
-    volumes:
-      - tailscale_state:/var/lib/tailscale
-      - ./tailscale-serve:/config:ro
-    networks: [backend]
-
-volumes:
-  postgres_data:
-  redis_data:
-  directus_uploads:
-  directus_extensions:
-  tailscale_state:
+    networks: [egress, platform]
 
 networks:
-  backend:
+  egress:
     driver: bridge
+  platform:
+    name: bot_platform_backend
+    external: true
