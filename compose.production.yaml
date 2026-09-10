@@ -102,6 +102,7 @@ services:
         condition: service_completed_successfully
     environment:
       TS_AUTH_ONCE: 'true'
+      TS_BOOT_TIMEOUT: '10m'
       TS_ENABLE_HEALTH_CHECK: 'true'
       TS_HOSTNAME: bot-content-cms
       TS_LOCAL_ADDR_PORT: '0.0.0.0:9002'
