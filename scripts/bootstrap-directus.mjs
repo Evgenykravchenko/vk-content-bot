@@ -179,6 +179,18 @@ async function createItem(collection, data) {
   return result.data;
 }
 
+async function configureProject() {
+  await request('/settings', {
+    method: 'PATCH',
+    body: JSON.stringify({
+      project_name: 'Bot Content CMS',
+      project_descriptor: 'Контент для ботов',
+      auth_login_attempts: null,
+    }),
+  });
+  console.log('Directus project settings are ready.');
+}
+
 async function createSchema() {
   await ensureCollection('bot_settings', {
     icon: 'settings',
@@ -511,6 +523,7 @@ async function seedDemo() {
 }
 
 await waitForDirectus();
+await configureProject();
 await createSchema();
 if (seedDemoContent) {
   await seedDemo();
