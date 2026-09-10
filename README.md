@@ -45,7 +45,7 @@ VK Content Bot ──► Directus CMS ──► ответ, блоки, кноп
 - изоляция контента по `CONTENT_BOT_KEY`;
 - кеш правил, structured logging и graceful shutdown.
 
-Пошаговые рецепты для редактора: [docs/CONTENT_GUIDE.md](docs/CONTENT_GUIDE.md).
+> **Наполняете CMS?** Откройте единую [инструкцию редактора](docs/CONTENT_GUIDE.md): в ней объяснён каждый раздел и собраны готовые примеры текста, медиа, кнопок и fallback.
 
 ## Локальная разработка
 
