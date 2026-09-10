@@ -18,7 +18,16 @@ compose() {
 }
 
 compose config --quiet
-compose pull bot
+
+# The image is public. Use an isolated client configuration so stale or
+# unrelated GHCR credentials on the host cannot break the deployment.
+docker_config_dir=$(mktemp -d)
+trap 'rm -rf "$docker_config_dir"' EXIT HUP INT TERM
+docker --config "$docker_config_dir" compose \
+  --env-file "$env_file" \
+  -f "$repo_dir/compose.yaml" \
+  -f "$repo_dir/compose.production.yaml" \
+  pull bot
+
 compose up -d --no-build --remove-orphans bot
 compose ps
-
