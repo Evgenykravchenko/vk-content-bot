@@ -109,7 +109,7 @@ CI выполняет эти проверки для push и pull request, а т
 - `feat:` → minor;
 - `feat!:` или `BREAKING CHANGE:` → major.
 
-Release Please обновляет `CHANGELOG.md`, `package.json`, создаёт tag и GitHub Release. После публикации релиза GitHub Actions собирает:
+Workflow `Release` принимает новую SemVer-версию, собирает образы, создаёт tag и GitHub Release с автоматическими notes:
 
 ```text
 ghcr.io/evgenykravchenko/vk-content-bot:0.2.0

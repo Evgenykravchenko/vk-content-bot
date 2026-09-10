@@ -38,9 +38,9 @@ docker inspect --format '{{.State.Health.Status}}' vk-content-bot-bot-1
 
 1. Создайте обычный PR с Conventional Commits.
 2. Дождитесь зелёного CI.
-3. Объедините Release Please PR.
-4. Дождитесь публикации GHCR-образа.
-5. Запустите **Deploy production** и введите версию без `v`, например `0.2.0`.
+3. Запустите workflow **Release** и введите новую версию без `v`.
+4. Дождитесь публикации GitHub Release и GHCR-образа.
+5. Запустите **Deploy production** с той же версией.
 
 Выкладка имеет отдельный concurrency lock и не отменяет уже идущий deployment.
 
