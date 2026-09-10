@@ -2,7 +2,7 @@
 
 Эта инструкция для человека, который наполняет бота через Directus. Знать Node.js, Docker, API и устройство базы данных не нужно.
 
-Directus открывается по адресу [http://localhost:8055](http://localhost:8055). Войдите с почтой и паролем из `DIRECTUS_ADMIN_EMAIL` и `DIRECTUS_ADMIN_PASSWORD`.
+Production CMS открывается по адресу [https://bot-content-cms.tailcc0b45.ts.net](https://bot-content-cms.tailcc0b45.ts.net). Войдите по выданным администратором email и паролю.
 
 ## Главное за минуту
 
@@ -17,6 +17,8 @@ Directus открывается по адресу [http://localhost:8055](http:/
 - **Media Assets** подготавливает файлы с Яндекс Диска для VK;
 - **Response Buttons** добавляет кнопки под ответом;
 - **Bot Settings** задаёт ответ на неизвестное сообщение.
+
+В CMS может быть несколько ботов. В **Responses**, **Keywords**, **Media Assets** и **Bot Settings** всегда выбирайте одного и того же бота. Это не даёт контенту разных тематик смешиваться.
 
 ![Как связаны разделы Directus](assets/content-model.svg)
 
@@ -41,7 +43,7 @@ Responses → Response Blocks → Keywords → проверка в VK
 
 ## Первый обязательный шаг: сообщение «ничего не найдено»
 
-Откройте **Bot Settings**. Здесь есть два варианта.
+Откройте **Bot Settings** и выберите запись нужного бота. Здесь есть два варианта.
 
 ### Простой текст
 
@@ -76,6 +78,7 @@ Responses → Response Blocks → Keywords → проверка в VK
 
 | Поле              | Что указать                       |
 | ----------------- | --------------------------------- |
+| **Bot**           | нужный бот                        |
 | **Name**          | `Условия доставки`                |
 | **Status**        | `Published`                       |
 | **Fallback Text** | `Информация временно недоступна.` |
@@ -102,6 +105,7 @@ Responses → Response Blocks → Keywords → проверка в VK
 
 | Поле           | Что указать        |
 | -------------- | ------------------ |
+| **Bot**        | тот же бот         |
 | **Phrase**     | `доставка`         |
 | **Match Mode** | `Exact`            |
 | **Priority**   | `100`              |
@@ -261,6 +265,7 @@ Responses → Response Blocks → Keywords → проверка в VK
 
 | Поле            | Что указать                              |
 | --------------- | ---------------------------------------- |
+| **Bot**         | бот, которому нужен материал             |
 | **Name**        | понятное название для редактора          |
 | **Kind**        | `Photo`, `Video`, `Audio` или `Document` |
 | **Yandex Path** | полный путь с предыдущего шага           |
