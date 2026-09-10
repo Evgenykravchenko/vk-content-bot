@@ -27,6 +27,7 @@ export class DirectusClient {
   constructor(
     private readonly baseUrl: string,
     private readonly token: string,
+    private readonly botKey: string,
   ) {}
 
   private async request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -59,6 +60,7 @@ export class DirectusClient {
   async getRules(): Promise<KeywordRule[]> {
     const query = new URLSearchParams({
       'filter[enabled][_eq]': 'true',
+      'filter[bot][key][_eq]': this.botKey,
       fields: 'id,phrase,match_mode,priority,response,enabled',
       sort: '-priority,-phrase',
       limit: '-1',
@@ -70,22 +72,22 @@ export class DirectusClient {
   }
 
   async getBotSettings(): Promise<BotSettings | null> {
-    try {
-      const query = new URLSearchParams({ fields: 'unknown_message,fallback_response' });
-      const result = await this.request<DirectusEnvelope<BotSettings>>(
-        `/items/bot_settings?${query.toString()}`,
-      );
-      return result.data;
-    } catch (error) {
-      if (error instanceof DirectusError && error.status === 404) return null;
-      throw error;
-    }
+    const query = new URLSearchParams({
+      'filter[bot][key][_eq]': this.botKey,
+      fields: 'unknown_message,fallback_response',
+      limit: '1',
+    });
+    const result = await this.request<DirectusEnvelope<BotSettings[]>>(
+      `/items/bot_settings?${query.toString()}`,
+    );
+    return result.data[0] ?? null;
   }
 
   async getPreparedResponse(responseId: number): Promise<PreparedResponse | null> {
     const responseQuery = new URLSearchParams({
       'filter[id][_eq]': String(responseId),
       'filter[status][_eq]': 'published',
+      'filter[bot][key][_eq]': this.botKey,
       fields: 'id,name,status,fallback_text',
       limit: '1',
     });
@@ -97,7 +99,10 @@ export class DirectusClient {
 
     const blocksQuery = new URLSearchParams({
       'filter[response][_eq]': String(responseId),
+      'filter[response][bot][key][_eq]': this.botKey,
       'filter[enabled][_eq]': 'true',
+      'filter[_or][0][media][_null]': 'true',
+      'filter[_or][1][media][bot][key][_eq]': this.botKey,
       fields: 'id,response,sort,kind,body,send_separately,enabled,media.*',
       sort: 'sort,id',
       limit: '-1',
@@ -108,6 +113,7 @@ export class DirectusClient {
 
     const buttonsQuery = new URLSearchParams({
       'filter[response][_eq]': String(responseId),
+      'filter[response][bot][key][_eq]': this.botKey,
       'filter[enabled][_eq]': 'true',
       fields: 'id,response,label,action,target,color,row_number,sort,enabled',
       sort: 'row_number,sort,id',
@@ -123,6 +129,7 @@ export class DirectusClient {
   async getQueuedMedia(limit: number): Promise<MediaAsset[]> {
     const query = new URLSearchParams({
       'filter[status][_eq]': 'queued',
+      'filter[bot][key][_eq]': this.botKey,
       fields: '*',
       sort: 'id',
       limit: String(limit),

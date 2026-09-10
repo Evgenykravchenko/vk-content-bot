@@ -25,7 +25,11 @@ export class Application {
     private readonly logger: Logger,
   ) {
     this.vk = new VK({ token: config.VK_TOKEN });
-    const directus = new DirectusClient(config.DIRECTUS_URL, config.DIRECTUS_TOKEN);
+    const directus = new DirectusClient(
+      config.DIRECTUS_URL,
+      config.DIRECTUS_TOKEN,
+      config.CONTENT_BOT_KEY,
+    );
     this.content = new ContentService(directus, config.RULE_CACHE_TTL_SECONDS * 1000, logger);
 
     if (config.YANDEX_DISK_TOKEN) {
@@ -55,7 +59,10 @@ export class Application {
     this.registerHandlers();
     this.mediaWorker?.start();
     await this.vk.updates.startPolling();
-    this.logger.info({ groupId: this.config.VK_GROUP_ID }, 'VK bot started');
+    this.logger.info(
+      { groupId: this.config.VK_GROUP_ID, contentBotKey: this.config.CONTENT_BOT_KEY },
+      'VK bot started',
+    );
   }
 
   async stop(signal: string): Promise<void> {
