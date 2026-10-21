@@ -11,9 +11,6 @@ import { MediaPreparer } from './services/media-preparer.js';
 import { MediaWorker } from './services/media-worker.js';
 import { YandexDiskClient } from './services/yandex-disk-client.js';
 
-const DEFAULT_UNKNOWN_COMMAND_MESSAGE =
-  'Не нашёл подходящего материала. Попробуйте другое ключевое слово.';
-
 export class Application {
   private readonly vk: VK;
   private readonly content: ContentService;
@@ -84,17 +81,13 @@ export class Application {
         const content = await this.content.findResponse(text);
         if (!content) {
           const fallback = await this.content.getFallbackContent();
+          let sent = false;
           if (fallback.response) {
-            const sent = await this.sendResponse(context, fallback.response);
-            if (!sent) {
-              await context.send({
-                message: fallback.message ?? DEFAULT_UNKNOWN_COMMAND_MESSAGE,
-                random_id: getRandomId(),
-              });
-            }
-          } else {
+            sent = await this.sendResponse(context, fallback.response);
+          }
+          if (!sent && fallback.message) {
             await context.send({
-              message: fallback.message ?? DEFAULT_UNKNOWN_COMMAND_MESSAGE,
+              message: fallback.message,
               random_id: getRandomId(),
             });
           }

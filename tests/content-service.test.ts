@@ -56,4 +56,19 @@ describe('ContentService fallback', () => {
       message: 'Попробуйте другое слово',
     });
   });
+
+  it('returns an empty fallback when silent mode is configured', async () => {
+    const directus = createDirectusStub({
+      getBotSettings: vi.fn().mockResolvedValue({
+        unknown_message: null,
+        fallback_response: null,
+      }),
+    });
+    const service = new ContentService(directus, 30_000, createLogger('silent', false));
+
+    await expect(service.getFallbackContent()).resolves.toEqual({
+      response: null,
+      message: null,
+    });
+  });
 });
