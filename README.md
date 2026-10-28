@@ -15,9 +15,7 @@
   <img alt="License MIT" src="https://img.shields.io/badge/License-MIT-f5c518">
 </p>
 
-Редактор меняет ключевые слова, тексты, файлы, fallback и кнопки в Directus. Пересобирать бота для нового контента не нужно.
-
-Общая CMS и её PostgreSQL/Redis не входят в этот репозиторий. Ими владеет [`bot-platform-infra`](https://github.com/Evgenykravchenko/bot-platform-infra).
+Редактор меняет ключевые слова, тексты, файлы, fallback и кнопки в разделе **Автоответы** BotCRM. Пересобирать бота для нового контента не нужно. Directus остаётся внутренним хранилищем платформы: бот не знает его адрес и не получает административный токен.
 
 ## Как это работает
 
@@ -25,11 +23,11 @@
 Пользователь VK
        │
        ▼
-VK Content Bot ──► Directus CMS ──► ответ, блоки, кнопки
+VK Content Bot ──► BotCRM Content API ──► ответ, медиа, кнопки
        │
        └──► VK API
 
-Яндекс Диск ──► media worker ──► VK attachment ID ──► Directus CMS
+Яндекс Диск ──► media worker ──► VK attachment ID ──► BotCRM
 ```
 
 Файл с Яндекс Диска передаётся во VK один раз. После этого бот использует сохранённый VK ID и не скачивает оригинал на каждый запрос.
@@ -42,31 +40,30 @@ VK Content Bot ──► Directus CMS ──► ответ, блоки, кноп
 - inline-кнопки команд и ссылок;
 - полноценный fallback-ответ;
 - фоновая подготовка закрытых файлов с Яндекс Диска;
-- изоляция контента по `CONTENT_BOT_KEY`;
+- изоляция контента персональным токеном BotCRM;
 - кеш правил, structured logging и graceful shutdown.
 
-> **Наполняете CMS?** Откройте единую [инструкцию редактора](docs/CONTENT_GUIDE.md): в ней объяснён каждый раздел и собраны готовые примеры текста, медиа, кнопок и fallback.
+> **Наполняете бота?** Откройте [инструкцию редактора](docs/CONTENT_GUIDE.md): в ней показано, как собрать текст, медиа, кнопки и ответ по умолчанию в BotCRM.
 
 ## Локальная разработка
 
-Сначала запустите CMS из соседнего репозитория:
+Сначала запустите BotCRM с внутренней контентной инфраструктурой. Затем в BotCRM откройте **Автоответы**, выберите бота и создайте для него персональный токен.
 
 ```bash
-cd ../bot-platform-infra
-cp .env.example .env
-docker compose --env-file .env -f compose.yaml -f compose.local.yaml up -d
+cd ../botcrm
+docker compose -f infra/docker-compose.yml up -d
 ```
 
 Затем запустите бота:
 
 ```bash
 cp .env.example .env
-# заполните VK_TOKEN, Directus token и остальные значения
+# заполните VK_TOKEN, BOTCRM_CONTENT_TOKEN и остальные значения
 docker compose up -d --build bot
 docker compose logs -f bot
 ```
 
-Для запуска без Docker замените `DIRECTUS_URL` на `http://localhost:8055`, затем:
+Для запуска без Docker укажите `BOTCRM_URL=http://localhost:4100/api/v1`, затем:
 
 ```bash
 npm ci
@@ -93,9 +90,8 @@ CI выполняет эти проверки для push и pull request, а т
 | `VK_TOKEN`                | Токен сообщества VK                                 |
 | `VK_GROUP_ID`             | Числовой ID сообщества                              |
 | `VK_MEDIA_UPLOAD_PEER_ID` | ID аккаунта для загрузки фото и документов          |
-| `CONTENT_BOT_KEY`         | Какое контентное пространство CMS использовать      |
-| `DIRECTUS_URL`            | Внутренний URL Directus                             |
-| `DIRECTUS_TOKEN`          | Токен чтения и подготовки медиа                     |
+| `BOTCRM_URL`              | API единого центра управления ботами                |
+| `BOTCRM_CONTENT_TOKEN`    | Персональный токен контента, созданный в BotCRM      |
 | `YANDEX_DISK_TOKEN`       | OAuth-токен Диска; можно оставить пустым для текста |
 | `RULE_CACHE_TTL_SECONDS`  | Кеш ключевых правил, по умолчанию 30 секунд         |
 
