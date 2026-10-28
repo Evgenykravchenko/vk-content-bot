@@ -17,8 +17,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "cms:bootstrap": "node scripts/bootstrap-directus.mjs"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "dotenv": "^16.6.1",

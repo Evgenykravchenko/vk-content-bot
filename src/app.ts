@@ -6,7 +6,7 @@ import type { PreparedResponse } from './domain/types.js';
 import { renderResponse } from './domain/renderer.js';
 import { keywordFromButtonPayload } from './domain/keyboard.js';
 import { ContentService } from './services/content-service.js';
-import { DirectusClient } from './services/directus-client.js';
+import { BotCrmContentClient } from './services/botcrm-content-client.js';
 import { MediaPreparer } from './services/media-preparer.js';
 import { MediaWorker } from './services/media-worker.js';
 import { YandexDiskClient } from './services/yandex-disk-client.js';
@@ -22,17 +22,13 @@ export class Application {
     private readonly logger: Logger,
   ) {
     this.vk = new VK({ token: config.VK_TOKEN });
-    const directus = new DirectusClient(
-      config.DIRECTUS_URL,
-      config.DIRECTUS_TOKEN,
-      config.CONTENT_BOT_KEY,
-    );
-    this.content = new ContentService(directus, config.RULE_CACHE_TTL_SECONDS * 1000, logger);
+    const contentClient = new BotCrmContentClient(config.BOTCRM_URL, config.BOTCRM_CONTENT_TOKEN);
+    this.content = new ContentService(contentClient, config.RULE_CACHE_TTL_SECONDS * 1000, logger);
 
     if (config.YANDEX_DISK_TOKEN) {
       const yandexDisk = new YandexDiskClient(config.YANDEX_DISK_TOKEN);
       const preparer = new MediaPreparer(
-        directus,
+        contentClient,
         yandexDisk,
         this.vk,
         config.VK_GROUP_ID,
@@ -40,7 +36,7 @@ export class Application {
         logger,
       );
       this.mediaWorker = new MediaWorker(
-        directus,
+        contentClient,
         preparer,
         config.MEDIA_POLL_INTERVAL_SECONDS * 1000,
         config.MEDIA_BATCH_SIZE,
@@ -57,7 +53,7 @@ export class Application {
     this.mediaWorker?.start();
     await this.vk.updates.startPolling();
     this.logger.info(
-      { groupId: this.config.VK_GROUP_ID, contentBotKey: this.config.CONTENT_BOT_KEY },
+      { groupId: this.config.VK_GROUP_ID, contentSource: 'botcrm' },
       'VK bot started',
     );
   }

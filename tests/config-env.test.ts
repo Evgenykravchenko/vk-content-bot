@@ -5,7 +5,7 @@ const requiredEnvironment = {
   VK_TOKEN: 'community-token',
   VK_GROUP_ID: '2254462172',
   VK_MEDIA_UPLOAD_PEER_ID: '186600798',
-  DIRECTUS_TOKEN: 'directus-token',
+  BOTCRM_CONTENT_TOKEN: `bcr_${'x'.repeat(43)}`,
 };
 
 describe('loadConfig', () => {
@@ -14,8 +14,7 @@ describe('loadConfig', () => {
 
     expect(config.VK_GROUP_ID).toBe(2254462172);
     expect(config.VK_MEDIA_UPLOAD_PEER_ID).toBe(186600798);
-    expect(config.CONTENT_BOT_KEY).toBe('vk-content-bot');
-    expect(config.DIRECTUS_URL).toBe('http://localhost:8055');
+    expect(config.BOTCRM_URL).toBe('http://localhost:4100/api/v1');
     expect(config.MEDIA_BATCH_SIZE).toBe(3);
   });
 
@@ -23,9 +22,9 @@ describe('loadConfig', () => {
     expect(() =>
       loadConfig({
         ...requiredEnvironment,
-        DIRECTUS_URL: 'not-a-url',
+        BOTCRM_URL: 'not-a-url',
         MEDIA_BATCH_SIZE: '21',
       }),
-    ).toThrow(/DIRECTUS_URL:|MEDIA_BATCH_SIZE:/);
+    ).toThrow(/BOTCRM_URL:|MEDIA_BATCH_SIZE:/);
   });
 });

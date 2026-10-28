@@ -5,12 +5,8 @@ const envSchema = z.object({
   VK_TOKEN: z.string().min(1, 'VK_TOKEN is required'),
   VK_GROUP_ID: z.coerce.number().int().positive(),
   VK_MEDIA_UPLOAD_PEER_ID: z.coerce.number().int().positive(),
-  CONTENT_BOT_KEY: z
-    .string()
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
-    .default('vk-content-bot'),
-  DIRECTUS_URL: z.string().url().default('http://localhost:8055'),
-  DIRECTUS_TOKEN: z.string().min(1, 'DIRECTUS_TOKEN is required'),
+  BOTCRM_URL: z.string().url().default('http://localhost:4100/api/v1'),
+  BOTCRM_CONTENT_TOKEN: z.string().min(40, 'BOTCRM_CONTENT_TOKEN is required'),
   YANDEX_DISK_TOKEN: z.string().optional().default(''),
   YANDEX_DISK_ROOT: z.string().default('/VK Bot'),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),

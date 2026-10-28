@@ -1,7 +1,7 @@
 import { findBestRule } from '../domain/matcher.js';
 import type { FallbackContent, KeywordRule, PreparedResponse } from '../domain/types.js';
 import type { Logger } from '../config/logger.js';
-import type { DirectusClient } from './directus-client.js';
+import type { ContentClient } from './botcrm-content-client.js';
 
 interface RuleCache {
   rules: KeywordRule[];
@@ -13,7 +13,7 @@ export class ContentService {
   private refreshPromise: Promise<KeywordRule[]> | null = null;
 
   constructor(
-    private readonly directus: DirectusClient,
+    private readonly contentClient: ContentClient,
     private readonly cacheTtlMs: number,
     private readonly logger: Logger,
   ) {}
@@ -24,16 +24,16 @@ export class ContentService {
     if (!rule) return null;
 
     this.logger.debug({ ruleId: rule.id, responseId: rule.response }, 'Keyword rule matched');
-    return this.directus.getPreparedResponse(rule.response);
+    return this.contentClient.getPreparedResponse(rule.response);
   }
 
   async getFallbackContent(): Promise<FallbackContent> {
-    const settings = await this.directus.getBotSettings();
+    const settings = await this.contentClient.getBotSettings();
     const fallbackResponseId = settings?.fallback_response;
     const fallbackMessage = settings?.unknown_message?.trim() || null;
 
     if (fallbackResponseId) {
-      const response = await this.directus.getPreparedResponse(fallbackResponseId);
+      const response = await this.contentClient.getPreparedResponse(fallbackResponseId);
       if (response) return { response, message: fallbackMessage };
     }
 
@@ -53,7 +53,7 @@ export class ContentService {
     }
 
     if (!this.refreshPromise) {
-      this.refreshPromise = this.directus
+      this.refreshPromise = this.contentClient
         .getRules()
         .then((rules) => {
           this.cache = { rules, expiresAt: Date.now() + this.cacheTtlMs };
