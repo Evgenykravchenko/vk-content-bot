@@ -91,7 +91,7 @@ CI выполняет эти проверки для push и pull request, а т
 | `VK_GROUP_ID`             | Числовой ID сообщества                              |
 | `VK_MEDIA_UPLOAD_PEER_ID` | ID аккаунта для загрузки фото и документов          |
 | `BOTCRM_URL`              | API единого центра управления ботами                |
-| `BOTCRM_CONTENT_TOKEN`    | Персональный токен контента, созданный в BotCRM      |
+| `BOTCRM_CONTENT_TOKEN`    | Персональный токен контента, созданный в BotCRM     |
 | `YANDEX_DISK_TOKEN`       | OAuth-токен Диска; можно оставить пустым для текста |
 | `RULE_CACHE_TTL_SECONDS`  | Кеш ключевых правил, по умолчанию 30 секунд         |
 

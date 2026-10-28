@@ -17,7 +17,10 @@ describe('BotCrmContentClient isolation', () => {
     );
     vi.stubGlobal('fetch', fetchMock);
 
-    const client = new BotCrmContentClient('https://crm.example.test/api/v1', `bcr_${'x'.repeat(43)}`);
+    const client = new BotCrmContentClient(
+      'https://crm.example.test/api/v1',
+      `bcr_${'x'.repeat(43)}`,
+    );
     await client.getRules();
     await client.getQueuedMedia(3);
 
@@ -25,7 +28,9 @@ describe('BotCrmContentClient isolation', () => {
     expect(urls).toHaveLength(2);
     expect(urls[0]?.pathname).toBe('/api/v1/bot-content/rules');
     expect(urls[1]?.pathname).toBe('/api/v1/bot-content/media/queued');
-    const requestHeaders = new Headers((fetchMock.mock.calls[0]?.[1] as RequestInit | undefined)?.headers);
+    const requestHeaders = new Headers(
+      (fetchMock.mock.calls[0]?.[1] as RequestInit | undefined)?.headers,
+    );
     expect(requestHeaders.get('authorization')).toBe(`Bearer bcr_${'x'.repeat(43)}`);
   });
 });

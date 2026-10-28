@@ -1,9 +1,4 @@
-import type {
-  BotSettings,
-  KeywordRule,
-  MediaAsset,
-  PreparedResponse,
-} from '../domain/types.js';
+import type { BotSettings, KeywordRule, MediaAsset, PreparedResponse } from '../domain/types.js';
 
 export class BotCrmContentError extends Error {
   constructor(
