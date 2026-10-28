@@ -1,4 +1,6 @@
-FROM node:22.18.0-alpine AS dependencies
+ARG NODE_VERSION=22.18.0
+
+FROM --platform=$BUILDPLATFORM node:${NODE_VERSION}-alpine AS dependencies
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci
@@ -14,7 +16,10 @@ COPY src ./src
 COPY tests ./tests
 CMD ["npm", "test"]
 
-FROM node:22.18.0-alpine AS runtime
+FROM dependencies AS production-dependencies
+RUN npm prune --omit=dev && npm cache clean --force
+
+FROM node:${NODE_VERSION}-alpine AS runtime
 ARG VERSION=dev
 ARG VCS_REF=unknown
 ENV NODE_ENV=production
@@ -22,7 +27,7 @@ ENV APP_VERSION=${VERSION}
 WORKDIR /app
 RUN addgroup -S app && adduser -S app -G app
 COPY package.json package-lock.json* ./
-RUN npm ci --omit=dev && npm cache clean --force
+COPY --from=production-dependencies /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY scripts/container-healthcheck.mjs ./container-healthcheck.mjs
 LABEL org.opencontainers.image.title="VK Content Bot" \
