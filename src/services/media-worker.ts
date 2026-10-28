@@ -1,5 +1,5 @@
 import type { Logger } from '../config/logger.js';
-import type { DirectusClient } from './directus-client.js';
+import type { ContentClient } from './botcrm-content-client.js';
 import type { MediaPreparer } from './media-preparer.js';
 
 export class MediaWorker {
@@ -7,7 +7,7 @@ export class MediaWorker {
   private running = false;
 
   constructor(
-    private readonly directus: DirectusClient,
+    private readonly contentClient: ContentClient,
     private readonly preparer: MediaPreparer,
     private readonly intervalMs: number,
     private readonly batchSize: number,
@@ -33,7 +33,7 @@ export class MediaWorker {
     this.running = true;
 
     try {
-      const assets = await this.directus.getQueuedMedia(this.batchSize);
+      const assets = await this.contentClient.getQueuedMedia(this.batchSize);
       for (const asset of assets) {
         await this.preparer.prepare(asset);
       }

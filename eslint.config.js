@@ -10,7 +10,7 @@ const typedConfigs = tseslint.configs.recommendedTypeChecked.map((config) => ({
 }));
 
 export default tseslint.config(
-  { ignores: ['dist/**', 'coverage/**', 'directus/uploads/**'] },
+  { ignores: ['dist/**', 'coverage/**'] },
   eslint.configs.recommended,
   {
     files: ['scripts/**/*.mjs'],

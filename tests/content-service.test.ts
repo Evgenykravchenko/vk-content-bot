@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createLogger } from '../src/config/logger.js';
 import type { PreparedResponse } from '../src/domain/types.js';
 import { ContentService } from '../src/services/content-service.js';
-import type { DirectusClient } from '../src/services/directus-client.js';
+import type { ContentClient } from '../src/services/botcrm-content-client.js';
 
 const preparedResponse: PreparedResponse = {
   response: {
@@ -15,25 +15,25 @@ const preparedResponse: PreparedResponse = {
   buttons: [],
 };
 
-function createDirectusStub(overrides: Partial<DirectusClient>): DirectusClient {
+function createContentStub(overrides: Partial<ContentClient>): ContentClient {
   return {
     getRules: vi.fn().mockResolvedValue([]),
     getBotSettings: vi.fn().mockResolvedValue(null),
     getPreparedResponse: vi.fn().mockResolvedValue(null),
     ...overrides,
-  } as unknown as DirectusClient;
+  } as unknown as ContentClient;
 }
 
 describe('ContentService fallback', () => {
   it('returns the configured published fallback response', async () => {
-    const directus = createDirectusStub({
+    const contentClient = createContentStub({
       getBotSettings: vi.fn().mockResolvedValue({
         unknown_message: 'Запасной текст',
         fallback_response: 7,
       }),
       getPreparedResponse: vi.fn().mockResolvedValue(preparedResponse),
     });
-    const service = new ContentService(directus, 30_000, createLogger('silent', false));
+    const service = new ContentService(contentClient, 30_000, createLogger('silent', false));
 
     await expect(service.getFallbackContent()).resolves.toEqual({
       response: preparedResponse,
@@ -42,14 +42,14 @@ describe('ContentService fallback', () => {
   });
 
   it('uses the fallback message when the response is unavailable', async () => {
-    const directus = createDirectusStub({
+    const contentClient = createContentStub({
       getBotSettings: vi.fn().mockResolvedValue({
         unknown_message: '  Попробуйте другое слово  ',
         fallback_response: 7,
       }),
       getPreparedResponse: vi.fn().mockResolvedValue(null),
     });
-    const service = new ContentService(directus, 30_000, createLogger('silent', false));
+    const service = new ContentService(contentClient, 30_000, createLogger('silent', false));
 
     await expect(service.getFallbackContent()).resolves.toEqual({
       response: null,
@@ -58,13 +58,13 @@ describe('ContentService fallback', () => {
   });
 
   it('returns an empty fallback when silent mode is configured', async () => {
-    const directus = createDirectusStub({
+    const contentClient = createContentStub({
       getBotSettings: vi.fn().mockResolvedValue({
         unknown_message: null,
         fallback_response: null,
       }),
     });
-    const service = new ContentService(directus, 30_000, createLogger('silent', false));
+    const service = new ContentService(contentClient, 30_000, createLogger('silent', false));
 
     await expect(service.getFallbackContent()).resolves.toEqual({
       response: null,

@@ -1,8 +1,8 @@
-const baseUrl = process.env.DIRECTUS_URL;
+const baseUrl = process.env.BOTCRM_URL;
 if (!baseUrl) process.exit(1);
 
 try {
-  const response = await fetch(new URL('/server/health', baseUrl), {
+  const response = await fetch(new URL('health', `${baseUrl.replace(/\/+$/, '')}/`), {
     signal: AbortSignal.timeout(4000),
   });
   process.exit(response.ok ? 0 : 1);

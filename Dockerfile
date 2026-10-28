@@ -31,7 +31,7 @@ COPY --from=production-dependencies /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY scripts/container-healthcheck.mjs ./container-healthcheck.mjs
 LABEL org.opencontainers.image.title="VK Content Bot" \
-      org.opencontainers.image.description="VK content delivery bot backed by Directus" \
+      org.opencontainers.image.description="VK content delivery bot managed through BotCRM" \
       org.opencontainers.image.source="https://github.com/Evgenykravchenko/vk-content-bot" \
       org.opencontainers.image.version=${VERSION} \
       org.opencontainers.image.revision=${VCS_REF} \

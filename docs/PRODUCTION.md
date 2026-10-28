@@ -2,8 +2,8 @@
 
 ## Контракт
 
-- CMS запущена из `bot-platform-infra`.
-- Docker-сеть `bot_platform_backend` существует.
+- BotCRM и его внутренняя CMS уже запущены.
+- Docker-сеть `botcrm_backend` существует.
 - Бот лежит в `/opt/vk-content-bot`.
 - Секреты лежат в `/etc/bot-platform/bots/vk-content-bot.env` с правами `600`.
 - `BOT_VERSION` содержит точную SemVer-версию, а не `latest`.
@@ -32,7 +32,7 @@ cd /opt/vk-content-bot
 docker inspect --format '{{.State.Health.Status}}' vk-content-bot-bot-1
 ```
 
-В логах должны появиться `VK bot started` с правильным `groupId` и `contentBotKey`.
+В логах должны появиться `VK bot started` с правильным `groupId` и `contentSource: botcrm`.
 
 ## Обновление
 
@@ -59,7 +59,7 @@ cd /opt/vk-content-bot
 ./scripts/deploy.sh
 ```
 
-Откат бота не меняет базу CMS и не затрагивает BotCRM.
+Откат бота не меняет данные контента и не затрагивает BotCRM.
 
 ## Если GHCR-образ приватный
 

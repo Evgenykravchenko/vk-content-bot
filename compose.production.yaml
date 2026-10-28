@@ -2,12 +2,12 @@ services:
   bot:
     image: ${BOT_IMAGE:-ghcr.io/evgenykravchenko/vk-content-bot}:${BOT_VERSION:?BOT_VERSION must be a SemVer release such as 0.2.0}
     environment:
-      DIRECTUS_URL: http://directus:8055
+      BOTCRM_URL: ${BOTCRM_URL:-http://api:4100/api/v1}
     networks: [egress, platform]
 
 networks:
   egress:
     driver: bridge
   platform:
-    name: bot_platform_backend
+    name: botcrm_backend
     external: true
