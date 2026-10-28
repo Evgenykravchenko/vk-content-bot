@@ -85,20 +85,21 @@ CI выполняет эти проверки для push и pull request, а т
 
 ## Конфигурация
 
-| Переменная                  | Назначение                                          |
-| --------------------------- | --------------------------------------------------- |
-| `VK_TOKEN`                  | Токен сообщества VK                                 |
-| `VK_VIDEO_TOKEN`            | Пользовательский OAuth-токен для загрузки видео     |
-| `VK_VIDEO_REFRESH_TOKEN`    | Refresh token VK ID для автоматического продления   |
-| `VK_VIDEO_DEVICE_ID`        | Идентификатор устройства из OAuth-ответа            |
-| `VK_VIDEO_CLIENT_ID`        | ID приложения VK ID                                 |
-| `VK_VIDEO_TOKEN_EXPIRES_AT` | Срок действия access token в Unix time              |
-| `VK_GROUP_ID`               | Числовой ID сообщества                              |
-| `VK_MEDIA_UPLOAD_PEER_ID`   | ID аккаунта для загрузки фото и документов          |
-| `BOTCRM_URL`                | API единого центра управления ботами                |
-| `BOTCRM_CONTENT_TOKEN`      | Персональный токен контента, созданный в BotCRM     |
-| `YANDEX_DISK_TOKEN`         | OAuth-токен Диска; можно оставить пустым для текста |
-| `RULE_CACHE_TTL_SECONDS`    | Кеш ключевых правил, по умолчанию 30 секунд         |
+| Переменная                     | Назначение                                                |
+| ------------------------------ | --------------------------------------------------------- |
+| `VK_TOKEN`                     | Токен сообщества VK                                       |
+| `VK_VIDEO_TOKEN`               | Пользовательский OAuth-токен для загрузки видео           |
+| `VK_VIDEO_REFRESH_TOKEN`       | Refresh token VK ID для автоматического продления         |
+| `VK_VIDEO_DEVICE_ID`           | Идентификатор устройства из OAuth-ответа                  |
+| `VK_VIDEO_CLIENT_ID`           | ID приложения VK ID                                       |
+| `VK_VIDEO_TOKEN_EXPIRES_AT`    | Срок действия access token в Unix time                    |
+| `VK_GROUP_ID`                  | Числовой ID сообщества                                    |
+| `VK_MEDIA_UPLOAD_PEER_ID`      | ID аккаунта для загрузки фото и документов                |
+| `BOTCRM_URL`                   | API единого центра управления ботами                      |
+| `BOTCRM_CONTENT_TOKEN`         | Персональный токен контента, созданный в BotCRM           |
+| `YANDEX_DISK_TOKEN`            | OAuth-токен Диска; можно оставить пустым для текста       |
+| `RULE_CACHE_TTL_SECONDS`       | Кеш ключевых правил, по умолчанию 30 секунд               |
+| `MEDIA_UPLOAD_TIMEOUT_SECONDS` | Лимит времени загрузки файла во VK, по умолчанию 30 минут |
 
 Полный список есть в [.env.example](.env.example).
 

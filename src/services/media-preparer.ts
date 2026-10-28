@@ -18,6 +18,7 @@ export class MediaPreparer {
     private readonly videoTokenProvider: VkVideoTokenProvider,
     private readonly groupId: number,
     private readonly uploadPeerId: number,
+    private readonly uploadTimeout: number,
     private readonly logger: Logger,
   ) {}
 
@@ -44,6 +45,7 @@ export class MediaPreparer {
         case 'video':
           attachment = await new VK({
             token: await this.videoTokenProvider.getToken(),
+            uploadTimeout: this.uploadTimeout,
           }).upload.video({
             source,
             group_id: this.groupId,

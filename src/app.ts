@@ -22,7 +22,8 @@ export class Application {
     private readonly config: AppConfig,
     private readonly logger: Logger,
   ) {
-    this.vk = new VK({ token: config.VK_TOKEN });
+    const uploadTimeout = config.MEDIA_UPLOAD_TIMEOUT_SECONDS * 1000;
+    this.vk = new VK({ token: config.VK_TOKEN, uploadTimeout });
     const videoTokenProvider = new VkVideoTokenProvider(
       {
         accessToken: config.VK_VIDEO_TOKEN,
@@ -47,6 +48,7 @@ export class Application {
         videoTokenProvider,
         config.VK_GROUP_ID,
         config.VK_MEDIA_UPLOAD_PEER_ID,
+        uploadTimeout,
         logger,
       );
       this.mediaWorker = new MediaWorker(
