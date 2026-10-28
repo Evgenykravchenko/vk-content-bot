@@ -1,8 +1,9 @@
-import type { VK } from 'vk-io';
+import { VK } from 'vk-io';
 import type { Logger } from '../config/logger.js';
 import type { MediaAsset } from '../domain/types.js';
 import type { ContentClient } from './botcrm-content-client.js';
 import type { YandexDiskClient } from './yandex-disk-client.js';
+import type { VkVideoTokenProvider } from './vk-video-token-provider.js';
 
 function errorMessage(error: unknown): string {
   if (error instanceof Error) return error.message.slice(0, 1000);
@@ -14,6 +15,7 @@ export class MediaPreparer {
     private readonly contentClient: ContentClient,
     private readonly yandexDisk: YandexDiskClient,
     private readonly vk: VK,
+    private readonly videoTokenProvider: VkVideoTokenProvider,
     private readonly groupId: number,
     private readonly uploadPeerId: number,
     private readonly logger: Logger,
@@ -40,7 +42,9 @@ export class MediaPreparer {
           });
           break;
         case 'video':
-          attachment = await this.vk.upload.video({
+          attachment = await new VK({
+            token: await this.videoTokenProvider.getToken(),
+          }).upload.video({
             source,
             group_id: this.groupId,
             name: asset.name,

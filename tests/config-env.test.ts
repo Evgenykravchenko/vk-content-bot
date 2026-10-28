@@ -13,6 +13,8 @@ describe('loadConfig', () => {
     const config = loadConfig(requiredEnvironment);
 
     expect(config.VK_GROUP_ID).toBe(2254462172);
+    expect(config.VK_VIDEO_TOKEN).toBe('');
+    expect(config.VK_VIDEO_CLIENT_ID).toBe(0);
     expect(config.VK_MEDIA_UPLOAD_PEER_ID).toBe(186600798);
     expect(config.BOTCRM_URL).toBe('http://localhost:4100/api/v1');
     expect(config.MEDIA_BATCH_SIZE).toBe(3);

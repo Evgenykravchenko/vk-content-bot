@@ -10,6 +10,7 @@ import { BotCrmContentClient } from './services/botcrm-content-client.js';
 import { MediaPreparer } from './services/media-preparer.js';
 import { MediaWorker } from './services/media-worker.js';
 import { YandexDiskClient } from './services/yandex-disk-client.js';
+import { VkVideoTokenProvider } from './services/vk-video-token-provider.js';
 
 export class Application {
   private readonly vk: VK;
@@ -22,6 +23,18 @@ export class Application {
     private readonly logger: Logger,
   ) {
     this.vk = new VK({ token: config.VK_TOKEN });
+    const videoTokenProvider = new VkVideoTokenProvider(
+      {
+        accessToken: config.VK_VIDEO_TOKEN,
+        refreshToken: config.VK_VIDEO_REFRESH_TOKEN,
+        deviceId: config.VK_VIDEO_DEVICE_ID,
+        clientId: config.VK_VIDEO_CLIENT_ID,
+        redirectUri: config.VK_VIDEO_REDIRECT_URI,
+        expiresAt: config.VK_VIDEO_TOKEN_EXPIRES_AT * 1000,
+        tokenFile: config.VK_VIDEO_TOKEN_FILE,
+      },
+      logger,
+    );
     const contentClient = new BotCrmContentClient(config.BOTCRM_URL, config.BOTCRM_CONTENT_TOKEN);
     this.content = new ContentService(contentClient, config.RULE_CACHE_TTL_SECONDS * 1000, logger);
 
@@ -31,6 +44,7 @@ export class Application {
         contentClient,
         yandexDisk,
         this.vk,
+        videoTokenProvider,
         config.VK_GROUP_ID,
         config.VK_MEDIA_UPLOAD_PEER_ID,
         logger,
