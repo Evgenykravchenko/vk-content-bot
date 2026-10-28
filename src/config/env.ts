@@ -3,6 +3,16 @@ import { z } from 'zod';
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   VK_TOKEN: z.string().min(1, 'VK_TOKEN is required'),
+  VK_VIDEO_TOKEN: z.string().optional().default(''),
+  VK_VIDEO_REFRESH_TOKEN: z.string().optional().default(''),
+  VK_VIDEO_DEVICE_ID: z.string().optional().default(''),
+  VK_VIDEO_CLIENT_ID: z.coerce.number().int().nonnegative().default(0),
+  VK_VIDEO_REDIRECT_URI: z
+    .string()
+    .url()
+    .default('https://bot-content-cms.tailcc0b45.ts.net/vk-oauth/callback'),
+  VK_VIDEO_TOKEN_EXPIRES_AT: z.coerce.number().int().nonnegative().default(0),
+  VK_VIDEO_TOKEN_FILE: z.string().min(1).default('/var/lib/vk-content-bot/vk-video-token.json'),
   VK_GROUP_ID: z.coerce.number().int().positive(),
   VK_MEDIA_UPLOAD_PEER_ID: z.coerce.number().int().positive(),
   BOTCRM_URL: z.string().url().default('http://localhost:4100/api/v1'),

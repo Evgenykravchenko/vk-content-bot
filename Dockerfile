@@ -25,7 +25,9 @@ ARG VCS_REF=unknown
 ENV NODE_ENV=production
 ENV APP_VERSION=${VERSION}
 WORKDIR /app
-RUN addgroup -S app && adduser -S app -G app
+RUN addgroup -S app && adduser -S app -G app \
+    && mkdir -p /var/lib/vk-content-bot \
+    && chown app:app /var/lib/vk-content-bot
 COPY package.json package-lock.json* ./
 COPY --from=production-dependencies /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist

@@ -34,6 +34,8 @@ docker inspect --format '{{.State.Health.Status}}' vk-content-bot-bot-1
 
 В логах должны появиться `VK bot started` с правильным `groupId` и `contentSource: botcrm`.
 
+Для автоматической загрузки видео в env добавляются access token, refresh token, `device_id`, ID приложения и срок действия из VK ID OAuth. При первом запуске они переносятся в закрытый volume `vk_video_auth`, после чего бот сам обновляет их. Обычная раздача контента использует отдельный `VK_TOKEN` сообщества.
+
 ## Обновление
 
 1. Создайте обычный PR с Conventional Commits.
