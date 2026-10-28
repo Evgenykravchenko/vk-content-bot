@@ -18,6 +18,7 @@ describe('loadConfig', () => {
     expect(config.VK_MEDIA_UPLOAD_PEER_ID).toBe(186600798);
     expect(config.BOTCRM_URL).toBe('http://localhost:4100/api/v1');
     expect(config.MEDIA_BATCH_SIZE).toBe(3);
+    expect(config.MEDIA_UPLOAD_TIMEOUT_SECONDS).toBe(1800);
   });
 
   it('reports invalid environment fields without exposing secret values', () => {
@@ -26,7 +27,8 @@ describe('loadConfig', () => {
         ...requiredEnvironment,
         BOTCRM_URL: 'not-a-url',
         MEDIA_BATCH_SIZE: '21',
+        MEDIA_UPLOAD_TIMEOUT_SECONDS: '30',
       }),
-    ).toThrow(/BOTCRM_URL:|MEDIA_BATCH_SIZE:/);
+    ).toThrow(/BOTCRM_URL:|MEDIA_BATCH_SIZE:|MEDIA_UPLOAD_TIMEOUT_SECONDS:/);
   });
 });

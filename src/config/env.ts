@@ -23,6 +23,7 @@ const envSchema = z.object({
   RULE_CACHE_TTL_SECONDS: z.coerce.number().int().positive().default(30),
   MEDIA_POLL_INTERVAL_SECONDS: z.coerce.number().int().positive().default(20),
   MEDIA_BATCH_SIZE: z.coerce.number().int().min(1).max(20).default(3),
+  MEDIA_UPLOAD_TIMEOUT_SECONDS: z.coerce.number().int().min(60).max(7200).default(1800),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;

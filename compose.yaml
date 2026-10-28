@@ -28,6 +28,7 @@ services:
       RULE_CACHE_TTL_SECONDS: ${RULE_CACHE_TTL_SECONDS:-30}
       MEDIA_POLL_INTERVAL_SECONDS: ${MEDIA_POLL_INTERVAL_SECONDS:-20}
       MEDIA_BATCH_SIZE: ${MEDIA_BATCH_SIZE:-3}
+      MEDIA_UPLOAD_TIMEOUT_SECONDS: ${MEDIA_UPLOAD_TIMEOUT_SECONDS:-1800}
     volumes:
       - vk_video_auth:/var/lib/vk-content-bot
     logging:
