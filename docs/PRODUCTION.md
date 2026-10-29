@@ -38,6 +38,9 @@ docker inspect --format '{{.State.Health.Status}}' vk-content-bot-bot-1
 
 ## Обновление
 
+При подключении Яндекс Диска через папку приложения выдайте OAuth-приложению только `cloud_api:disk.app_folder`. Тот же ограниченный токен задайте в `YANDEX_DISK_TOKEN` media worker, а путь папки своего бота — в `YANDEX_DISK_ROOT`. Фактический путь определяет BotCRM через `app:/`; пример для русскоязычного аккаунта: `/Приложения/bot_crm/vk_content_bot`. API Яндекса принимает этот полный путь с ограниченным токеном, поэтому изменение кода скачивания бота не требуется. Секрет хранится в `/etc/bot-platform/bots/vk-content-bot.env`, вне репозитория.
+
+
 1. Создайте обычный PR с Conventional Commits.
 2. Дождитесь зелёного CI.
 3. Запустите workflow **Release** и введите новую версию без `v`.
