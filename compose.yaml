@@ -10,6 +10,7 @@ services:
       - host.docker.internal:host-gateway
     environment:
       NODE_ENV: production
+      NODE_OPTIONS: ${NODE_OPTIONS:-}
       VK_TOKEN: ${VK_TOKEN}
       VK_VIDEO_TOKEN: ${VK_VIDEO_TOKEN:-}
       VK_VIDEO_REFRESH_TOKEN: ${VK_VIDEO_REFRESH_TOKEN:-}
