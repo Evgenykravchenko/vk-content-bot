@@ -43,9 +43,12 @@ export function renderResponse(content: PreparedResponse): OutboundMessage[] {
           },
         ];
       } else if (media) {
+        const waiting = media.status === 'queued' || media.status === 'processing';
         current.message = [
           current.message,
-          `Материал «${media.name}» пока подготавливается. Попробуйте немного позже.`,
+          waiting
+            ? `Материал «${media.name}» пока подготавливается. Попробуйте немного позже.`
+            : `Материал «${media.name}» временно недоступен. Попробуйте позже.`,
         ]
           .filter(Boolean)
           .join('\n\n');

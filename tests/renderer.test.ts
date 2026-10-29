@@ -40,6 +40,28 @@ const response: PreparedResponse = {
 };
 
 describe('renderResponse', () => {
+  it.each(['error', 'draft'] as const)('does not call a %s material processing', (status) => {
+    const content = structuredClone(response);
+    const media = content.blocks[1]!.media;
+    if (!media || typeof media === 'number') throw new Error('Expected media fixture');
+    media.status = status;
+    expect(renderResponse(content)[0]?.message).toBe(
+      'Описание\n\nМатериал «Видео» временно недоступен. Попробуйте позже.',
+    );
+    expect(renderResponse(content)[0]?.attachment).toBeUndefined();
+  });
+
+  it.each(['queued', 'processing'] as const)(
+    'keeps the preparation notice for %s media',
+    (status) => {
+      const content = structuredClone(response);
+      const media = content.blocks[1]!.media;
+      if (!media || typeof media === 'number') throw new Error('Expected media fixture');
+      media.status = status;
+      expect(renderResponse(content)[0]?.message).toContain('пока подготавливается');
+    },
+  );
+
   it('combines text and a ready attachment', () => {
     expect(renderResponse(response)).toEqual([
       {
