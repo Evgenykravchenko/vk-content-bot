@@ -212,6 +212,9 @@ export class Application {
         idempotencyKey: `${eventId}:response:${content.response.id}:${index}`,
         ...(outgoing.message ? { text: outgoing.message } : {}),
         ...(outgoing.attachment?.length ? { nativeAttachmentRefs: outgoing.attachment } : {}),
+        ...(outgoing.nativeAttachments?.length
+          ? { nativeAttachments: outgoing.nativeAttachments }
+          : {}),
         ...(buttons ? { buttons } : {}),
       });
     }

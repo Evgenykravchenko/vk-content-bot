@@ -16,6 +16,13 @@ export interface DialogButton {
   row: number;
 }
 
+export interface DialogNativeAttachment {
+  ref: string;
+  kind: 'photo' | 'video' | 'audio' | 'document';
+  name: string;
+  yandexPath: string;
+}
+
 export interface AcceptedDialogMessage {
   duplicate: boolean;
   conversationId?: string;
@@ -106,6 +113,7 @@ export class BotCrmDialogClient {
     conversationId: string;
     text?: string;
     nativeAttachmentRefs?: string[];
+    nativeAttachments?: DialogNativeAttachment[];
     buttons?: DialogButton[];
     idempotencyKey: string;
   }): Promise<unknown> {
@@ -117,6 +125,7 @@ export class BotCrmDialogClient {
         actor: 'bot',
         text: input.text ?? '',
         nativeAttachmentRefs: input.nativeAttachmentRefs,
+        nativeAttachments: input.nativeAttachments,
         buttons: input.buttons,
       }),
     });
