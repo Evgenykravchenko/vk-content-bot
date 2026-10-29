@@ -58,7 +58,7 @@ docker compose -f infra/docker-compose.yml up -d
 
 ```bash
 cp .env.example .env
-# заполните VK_TOKEN, BOTCRM_CONTENT_TOKEN и остальные значения
+# заполните VK_TOKEN, BOTCRM_CONTENT_TOKEN, BOTCRM_DIALOG_TOKEN и остальные значения
 docker compose up -d --build bot
 docker compose logs -f bot
 ```
@@ -97,6 +97,9 @@ CI выполняет эти проверки для push и pull request, а т
 | `VK_MEDIA_UPLOAD_PEER_ID`      | ID аккаунта для загрузки фото и документов                |
 | `BOTCRM_URL`                   | API единого центра управления ботами                      |
 | `BOTCRM_CONTENT_TOKEN`         | Персональный токен контента, созданный в BotCRM           |
+| `BOTCRM_DIALOG_TOKEN`          | Сервисный токен BotCRM для записи и отправки сообщений    |
+| `BOTCRM_WORKSPACE_ID`          | Рабочее пространство BotCRM, обычно `ws_demo`             |
+| `BOTCRM_BOT_SLUG`              | Идентификатор бота в CRM, обычно `vk_content_bot`         |
 | `YANDEX_DISK_TOKEN`            | OAuth-токен Диска; можно оставить пустым для текста       |
 | `RULE_CACHE_TTL_SECONDS`       | Кеш ключевых правил, по умолчанию 30 секунд               |
 | `MEDIA_UPLOAD_TIMEOUT_SECONDS` | Лимит времени загрузки файла во VK, по умолчанию 30 минут |
