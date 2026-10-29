@@ -33,6 +33,15 @@ export function renderResponse(content: PreparedResponse): OutboundMessage[] {
       const media = mediaFromBlock(block.media);
       if (media?.status === 'ready' && media.vk_attachment) {
         current.attachment = [...(current.attachment ?? []), media.vk_attachment];
+        current.nativeAttachments = [
+          ...(current.nativeAttachments ?? []),
+          {
+            ref: media.vk_attachment,
+            kind: media.kind,
+            name: media.name,
+            yandexPath: media.yandex_path,
+          },
+        ];
       } else if (media) {
         current.message = [
           current.message,

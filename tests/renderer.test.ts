@@ -42,7 +42,18 @@ const response: PreparedResponse = {
 describe('renderResponse', () => {
   it('combines text and a ready attachment', () => {
     expect(renderResponse(response)).toEqual([
-      { message: 'Описание', attachment: ['video-1_2_key'] },
+      {
+        message: 'Описание',
+        attachment: ['video-1_2_key'],
+        nativeAttachments: [
+          {
+            ref: 'video-1_2_key',
+            kind: 'video',
+            name: 'Видео',
+            yandexPath: '/VK Bot/video.mp4',
+          },
+        ],
+      },
     ]);
   });
 

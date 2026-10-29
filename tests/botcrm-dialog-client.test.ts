@@ -65,6 +65,14 @@ describe('BotCrmDialogClient', () => {
       conversationId: 'conversation-1',
       text: 'Ваш материал',
       nativeAttachmentRefs: ['photo-1_2_abc'],
+      nativeAttachments: [
+        {
+          ref: 'photo-1_2_abc',
+          kind: 'photo',
+          name: 'Фотография',
+          yandexPath: '/VK Content Bot/photo.jpg',
+        },
+      ],
       buttons: [{ text: 'Ещё', type: 'callback', value: 'ещё', row: 0 }],
       idempotencyKey: 'reply-1',
     });
@@ -76,6 +84,14 @@ describe('BotCrmDialogClient', () => {
     expect(JSON.parse(init.body as string)).toMatchObject({
       actor: 'bot',
       nativeAttachmentRefs: ['photo-1_2_abc'],
+      nativeAttachments: [
+        {
+          ref: 'photo-1_2_abc',
+          kind: 'photo',
+          name: 'Фотография',
+          yandexPath: '/VK Content Bot/photo.jpg',
+        },
+      ],
       buttons: [{ value: 'ещё' }],
     });
   });

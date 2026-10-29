@@ -83,8 +83,16 @@ export interface PreparedResponse {
   buttons: ResponseButton[];
 }
 
+export interface OutboundNativeAttachment {
+  ref: string;
+  kind: MediaKind;
+  name: string;
+  yandexPath: string;
+}
+
 export interface OutboundMessage {
   message?: string;
   attachment?: string[];
+  nativeAttachments?: OutboundNativeAttachment[];
   keyboard?: string;
 }
