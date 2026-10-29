@@ -6,8 +6,8 @@ import type { YandexDiskClient } from './yandex-disk-client.js';
 import type { VkVideoTokenProvider } from './vk-video-token-provider.js';
 
 function errorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message.slice(0, 1000);
-  return String(error).slice(0, 1000);
+  const message = error instanceof Error ? error.message : String(error);
+  return message.replace(/https?:\/\/[^\s"'<>]+/giu, '[URL скрыт]').slice(0, 1000);
 }
 
 export class MediaPreparer {
@@ -81,7 +81,15 @@ export class MediaPreparer {
         status: 'error',
         error_message: message,
       });
-      this.logger.error({ err: error, mediaId: asset.id }, 'Media preparation failed');
+      const code =
+        error && typeof error === 'object' && 'code' in error ? String(error.code) : undefined;
+      this.logger.error(
+        {
+          err: { type: error instanceof Error ? error.name : 'Error', message, code },
+          mediaId: asset.id,
+        },
+        'Media preparation failed',
+      );
     }
   }
 }
