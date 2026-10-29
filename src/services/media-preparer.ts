@@ -4,6 +4,7 @@ import type { MediaAsset } from '../domain/types.js';
 import type { ContentClient } from './botcrm-content-client.js';
 import type { YandexDiskClient } from './yandex-disk-client.js';
 import type { VkVideoTokenProvider } from './vk-video-token-provider.js';
+import { ProgressReporter, trackedDownload, TransferProgress } from './transfer-progress.js';
 
 function errorMessage(error: unknown): string {
   const message = error instanceof Error ? error.message : String(error);
@@ -23,12 +24,29 @@ export class MediaPreparer {
   ) {}
 
   async prepare(asset: MediaAsset): Promise<void> {
-    await this.contentClient.updateMedia(asset.id, { status: 'processing', error_message: null });
+    const tracker = new TransferProgress(asset.file_size ?? null);
+    const reporter = new ProgressReporter(
+      tracker,
+      (preparation) =>
+        this.contentClient.updateMedia(asset.id, { preparation, yandex_path: asset.yandex_path }),
+      () => this.logger.warn({ mediaId: asset.id }, 'Transfer progress update unavailable'),
+    );
+    await this.contentClient.updateMedia(asset.id, {
+      status: 'processing',
+      yandex_path: asset.yandex_path,
+      error_message: null,
+      preparation: tracker.snapshot(),
+    });
+    reporter.start();
+    let stream: ReturnType<typeof trackedDownload> | undefined;
 
     try {
       const file = await this.yandexDisk.getDownloadableFile(asset.yandex_path);
+      tracker.setTotal(file.size);
+      reporter.flush();
+      stream = trackedDownload(file, tracker, reporter, this.uploadTimeout);
       const source = {
-        value: file.href,
+        value: stream,
         filename: file.name,
         contentType: file.mimeType,
         contentLength: file.size,
@@ -67,8 +85,10 @@ export class MediaPreparer {
       }
 
       const vkAttachment = attachment.toString();
+      await reporter.stop();
       await this.contentClient.updateMedia(asset.id, {
         status: 'ready',
+        yandex_path: asset.yandex_path,
         vk_attachment: vkAttachment,
         mime_type: file.mimeType,
         file_size: file.size,
@@ -76,9 +96,12 @@ export class MediaPreparer {
       });
       this.logger.info({ mediaId: asset.id, vkAttachment }, 'Media prepared');
     } catch (error) {
+      stream?.destroy();
+      await reporter.stop();
       const message = errorMessage(error);
       await this.contentClient.updateMedia(asset.id, {
         status: 'error',
+        yandex_path: asset.yandex_path,
         error_message: message,
       });
       const code =
@@ -90,6 +113,9 @@ export class MediaPreparer {
         },
         'Media preparation failed',
       );
+    } finally {
+      stream?.destroy();
+      await reporter.stop();
     }
   }
 }

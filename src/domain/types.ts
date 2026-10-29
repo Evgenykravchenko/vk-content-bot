@@ -42,6 +42,15 @@ export interface FallbackContent {
   message: string | null;
 }
 
+export interface PreparationProgress {
+  attemptId: string;
+  stage: 'connecting' | 'transferring' | 'finalizing';
+  transferredBytes: number;
+  totalBytes: number | null;
+  bytesPerSecond: number | null;
+  etaSeconds: number | null;
+}
+
 export interface MediaAsset {
   id: number;
   name: string;
@@ -52,6 +61,7 @@ export interface MediaAsset {
   mime_type: string | null;
   file_size: number | null;
   error_message: string | null;
+  preparation?: PreparationProgress;
 }
 
 export interface ResponseBlock {
