@@ -75,7 +75,8 @@ export function buildResponseKeyboard(buttons: ResponseButton[]): string | undef
 }
 
 export function keywordFromButtonPayload(payload: unknown): string | null {
-  if (!payload || typeof payload !== 'object' || !('keyword' in payload)) return null;
-  const keyword = (payload as { keyword?: unknown }).keyword;
+  if (!payload || typeof payload !== 'object') return null;
+  const source = payload as { keyword?: unknown; value?: unknown; command?: unknown };
+  const keyword = source.keyword ?? source.value ?? source.command;
   return typeof keyword === 'string' && keyword.trim() ? keyword.trim() : null;
 }

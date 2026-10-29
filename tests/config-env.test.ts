@@ -6,6 +6,7 @@ const requiredEnvironment = {
   VK_GROUP_ID: '2254462172',
   VK_MEDIA_UPLOAD_PEER_ID: '186600798',
   BOTCRM_CONTENT_TOKEN: `bcr_${'x'.repeat(43)}`,
+  BOTCRM_DIALOG_TOKEN: 'service-token-for-dialog-tests',
 };
 
 describe('loadConfig', () => {
@@ -17,6 +18,8 @@ describe('loadConfig', () => {
     expect(config.VK_VIDEO_CLIENT_ID).toBe(0);
     expect(config.VK_MEDIA_UPLOAD_PEER_ID).toBe(186600798);
     expect(config.BOTCRM_URL).toBe('http://localhost:4100/api/v1');
+    expect(config.BOTCRM_BOT_SLUG).toBe('vk_content_bot');
+    expect(config.BOTCRM_WORKSPACE_ID).toBe('ws_demo');
     expect(config.MEDIA_BATCH_SIZE).toBe(3);
     expect(config.MEDIA_UPLOAD_TIMEOUT_SECONDS).toBe(1800);
   });

@@ -56,6 +56,7 @@ describe('buildResponseKeyboard', () => {
 describe('keywordFromButtonPayload', () => {
   it('extracts a keyword from a command button payload', () => {
     expect(keywordFromButtonPayload({ keyword: '  кот дня  ' })).toBe('кот дня');
+    expect(keywordFromButtonPayload({ value: '  помощь  ' })).toBe('помощь');
     expect(keywordFromButtonPayload({ other: 'value' })).toBeNull();
   });
 });
